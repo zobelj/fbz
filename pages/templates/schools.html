@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col-md-12">
+    <br>
+    <h2>School Database</h2>
+    <table class="table table-striped">
+        <tr>
+            <th style="text-align: center">Rank</th>
+            <th style="text-align: center">School</th>
+            <th style="text-align: center">Conference</th>
+            <th style="text-align: center">Wins</th>
+            <th style="text-align: center">Losses</th>
+            <th style="text-align: center">AdjO</th>
+            <th style="text-align: center">AdjD</th>
+            <th style="text-align: center">AdjT</th>
+        </tr>
+        {% for school in schools %}
+        <tr>
+            <td style="text-align: center">{{ school.rank }}</td>
+            <td style="text-align: center">{{ school.name }}</td>
+            <td style="text-align: center">{{ school.conference }}</td>
+            <td style="text-align: center">{{ school.wins }}</td>
+            <td style="text-align: center">{{ school.losses }}</td>
+            <td style="text-align: center">{{ school.adjO }}</td>
+            <td style="text-align: center">{{ school.adjD }}</td>
+            <td style="text-align: center">{{ school.adjT }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
