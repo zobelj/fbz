@@ -13,3 +13,6 @@ def schools_view(request):
 
 def school_view(request, school_name):
     return render(request, 'schools.html', {'schools': School.objects.filter(name=school_name.replace('-', ' '))})
+
+def conference_view(request, conference_name):
+    return render(request, 'schools.html', {'schools': School.objects.filter(conference=conference_name)})
