@@ -1,1 +1,1 @@
-web: gunicorn fbz.wsgi --log-file
+web: gunicorn fbz.wsgi
