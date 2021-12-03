@@ -12,4 +12,4 @@ def schools_view(request):
     return render(request, 'schools.html', {'schools': School.objects.all()})
 
 def school_view(request, school_name):
-    return render(request, 'schools.html', {'schools': School.objects.filter(name=school_name)})
+    return render(request, 'schools.html', {'schools': School.objects.filter(name=school_name.replace('-', ' '))})
