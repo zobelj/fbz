@@ -57,7 +57,17 @@
                     </li>
                 </ul>
               </div>
-
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  {% if user.is_authenticated %}
+                      <ul class="navbar-nav mb-2 me-auto">
+                          <li class="nav-item">
+                              <span class="nav-text">Hi, {{ user.username }}!</span>
+                          </li>
+                      </ul>
+                  {% endif %}
+                </li>
+              </ul>
         </div>
     </nav>
   

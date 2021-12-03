@@ -32,17 +32,20 @@ def calculate_view(request):
     # get team names from request
     if request.method == 'POST':
         data = request.data
-        team1 = data['team1']
-        team2 = data['team2']
+        away = data['away']
+        home = data['home']
         neutral_site = data['neutral_site']
 
         # calculate the winner
-        team1_score, team2_score, team1_prob, team2_prob = calculate(team1, team2, neutral_site)
+        away_score, home_score, away_prob, home_prob, total_points, home_spread = calculate(away, home, neutral_site)
+        print(home_spread)
         res = {
-            'team1_score': team1_score,
-            'team2_score': team2_score,
-            'team1_prob': team1_prob,
-            'team2_prob': team2_prob
+            'away_score': away_score,
+            'home_score': home_score,
+            'away_prob': away_prob,
+            'home_prob': home_prob,
+            'total_points': total_points,
+            'home_spread': home_spread
         }
 
         return Response(res, status=status.HTTP_200_OK)

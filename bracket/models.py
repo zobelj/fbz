@@ -46,6 +46,13 @@ class Conference(models.Model):
     name = models.CharField(max_length=100)
     full_name = models.CharField(max_length=100)
     
+class Calculate_Setting(models.Model):
+    _id = models.ObjectIdField()
+    avg_adjT = models.FloatField(default=0.0)
+    avg_adjO = models.FloatField(default=0.0)
+    hcao = models.FloatField(default=0.0)
+    hcad = models.FloatField(default=0.0)   
+
 class SchoolForm(forms.ModelForm):
     class Meta:
         model = School

@@ -4,7 +4,8 @@ def connect_to_mongo():
     client = pymongo.MongoClient("mongodb+srv://joe:boilerup@cluster0.si4pj.mongodb.net/database?retryWrites=true&w=majority")
     db = client["database"]
     collection = db["bracket_school"]
-    return collection
+    settings_collection = db["bracket_calculate_setting"]
+    return collection, settings_collection
 
 import requests
 import pandas as pd
@@ -34,10 +35,24 @@ def format_team(row):
     return {'name': row['Team'], 'rank': int(row['Rk']), 'conference': row['Conf'], 'wins': int(row['W-L'].split('-')[0]), 'losses': int(row['W-L'].split('-')[1]), 'adjEM': float(row['AdjEM']), 'adjO': float(row['AdjO']), 'adjD': float(row['AdjD']), 'adjT': float(row['AdjT'])}
 
 def update():
-    collection = connect_to_mongo()
+    collection, settings_collection = connect_to_mongo()
+
     mongo_db = []
-    for row in get_kp().iterrows():
+    df = get_kp()
+    for row in df.iterrows():
         mongo_db.append(format_team(row[1]))    
+
+    # get average adjT from df and average points
+    df['AdjT'] = df['AdjT'].astype(float)
+    df['AdjO'] = df['AdjO'].astype(float)
+    avg_adjT = df['AdjT'].mean()
+    avg_adjO = df['AdjO'].mean()
+
+    print(avg_adjT)
+    print(avg_adjO)
+
+    # get the first entry in the settings collection
+    settings_collection.find_one_and_update({}, {'$set': {'avg_adjT': avg_adjT, 'avg_adjO': avg_adjO}})
 
     # replace existing data with mongo_db
     collection.drop()

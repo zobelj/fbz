@@ -23,19 +23,21 @@
 
         <!-- reset the select menus for team calculation -->
         <script>
-            // function to reset team1 and team2 select boxes
+            // function to reset away and home select boxes
             function resetSelectBoxes() {
-                $('#team1').val('default');
-                $("#team1").selectpicker("refresh");
-                $('#team2').val('default');
-                $("#team2").selectpicker("refresh");
+                $('#away').val('default');
+                $("#away").selectpicker("refresh");
+                $('#home').val('default');
+                $("#home").selectpicker("refresh");
                 // clear values in the table rows
                 var output_table = document.getElementById("output_table");
                 for (let i = 0; i < 3; i++) {
                     output_table.rows[1].cells[i].innerHTML = "";
                     output_table.rows[2].cells[i].innerHTML = "";
-                }                
-            
+                }
+                var spread_table = document.getElementById("spread_table");
+                spread_table.rows[0].cells[0].innerHTML = "";
+                spread_table.rows[0].cells[1].innerHTML = "";  
             }
         </script>
 
@@ -44,8 +46,8 @@
             // function to calculate the score and win probabilities of a matchup
             function calculate() {
                 // get the names of the two teams selected and neutral_site
-                var team1 = $('#team1').val();
-                var team2 = $('#team2').val();
+                var away = $('#away').val();
+                var home = $('#home').val();
                 var neutral_site = $('#neutral_site').is(':checked');
                 
                 // use fetch to get the data from the api with POST
@@ -56,8 +58,8 @@
                         'X-CSRFToken': csrftoken
                     },
                     body: JSON.stringify({
-                        'team1': team1,
-                        'team2': team2,
+                        'away': away,
+                        'home': home,
                         'neutral_site': neutral_site
                     })
                 })
@@ -67,12 +69,21 @@
                     // if the data is not null, then update the page with the data
                     if (data != null) {
                         // update the page with the data
-                        $('#team1_name').text(team1);
-                        $('#team2_name').text(team2);
-                        $('#team1_score').text(data.team1_score);
-                        $('#team2_score').text(data.team2_score);
-                        $('#team1_prob').text((data.team1_prob * 100).toFixed(2) + "%");
-                        $('#team2_prob').text((data.team2_prob * 100).toFixed(2) + "%");
+                        $('#away_name').text(away);
+                        $('#home_name').text(home);
+                        $('#away_score').text(data.away_score);
+                        $('#home_score').text(data.home_score);
+                        $('#away_prob').text((data.away_prob * 100).toFixed(2) + "%");
+                        $('#home_prob').text((data.home_prob * 100).toFixed(2) + "%");
+                        $('#total_points').text("O/U " + data.total_points.toFixed(1));
+                        var home_spread = parseFloat(data.home_spread.toFixed(1));
+                        if(home_spread > 0) {
+                            home_spread = "+" + home_spread;
+                        }
+                        else if(home_spread == 0) {
+                            home_spread = "EVEN";
+                        }
+                        $('#home_spread').text(home + " " + home_spread);
                     }
                     // if the data is null, then reset the select boxes
                     else {
@@ -84,19 +95,19 @@
 
         <div class="container">
             <div class="row text-center justify-content-center">
-                <div class="col-md-6">
+                <div class="col-sm-9">
                     <br>
                     <h2>Calculate Matchup</h2>
                     <br>
                     <!-- Calculate predicted score, win probability given two teams -->
                     <!-- two input boxes for team names -->
                     <div class="row justify-content-center">
-                        <div class="col-lg-5">
+                        <div class="col-md-5">
                             <!-- dropdown search for team 1 -->
                             <div class="form-group">
-                                <label for="team1">Away</label>
+                                <label for="away">Away</label>
                                 <div>
-                                    <select class="selectpicker" data-live-search="true" id="team1">
+                                    <select class="selectpicker" data-live-search="true" id="away">
                                         <option style="display:none"></option>
                                         {% for school in schools %}
                                         <option value="{{ school.name }}">{{ school.name }}</option>
@@ -106,7 +117,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-lg-2">
+                        <div class="col-md-2">
                             <!-- checkbox for neutral site -->
                             
                                 <label class="form-check-label" for="neutral_site">
@@ -116,12 +127,12 @@
                                 <div><input class="form-check-input" type="checkbox" id="neutral_site"></div>
 
                         </div>
-                        <div class="col-lg-5">
+                        <div class="col-md-5">
                             <!-- dropdown search for team 2 -->
                             <div class="form-group">
-                                <label for="team2">Home</label>
+                                <label for="home">Home</label>
                                 <div>
-                                    <select class="selectpicker" data-live-search="true" id="team2">
+                                    <select class="selectpicker" data-live-search="true" id="home">
                                         <option style="display:none"></option>
                                         {% for school in schools %}
                                         <option value="{{ school.name }}">{{ school.name }}</option>
@@ -145,21 +156,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr id="team1_row">
-                                        <td id="team1_name"></td>
-                                        <td id="team1_score"></td>
-                                        <td id="team1_prob"></td>
+                                    <tr id="away_row">
+                                        <td id="away_name"></td>
+                                        <td id="away_score"></td>
+                                        <td id="away_prob"></td>
                                     </tr>
-                                    <tr id="team2_row">
-                                        <td id="team2_name"></td>
-                                        <td id="team2_score"></td>
-                                        <td id="team2_prob"></td>
+                                    <tr id="home_row">
+                                        <td id="home_name"></td>
+                                        <td id="home_score"></td>
+                                        <td id="home_prob"></td>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <div class="row text-center justify-content-center">
+                        <div class="col-sm-6">
+                            <table class="table table-bordered table-striped" id="spread_table">
+                                <tr>
+                                    <td id="total_points"></th>
+                                    <th id="home_spread"></th>
+                                </tr>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
                     <div class="row justify-content-center">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                             <br>
                             <button type="button" class="btn btn-primary" onclick="calculate()" id="calculate">Calculate</button>
                             <button type="button" class="btn btn-primary" onclick="resetSelectBoxes()" id="reset">Clear</button>
