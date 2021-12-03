@@ -36,10 +36,16 @@ class School(models.Model):
     conference = models.CharField(max_length=100)
     wins = models.IntegerField()
     losses = models.IntegerField()
+    adjEM = models.FloatField(default=0.0)
     adjO = models.FloatField(default=0.0)
     adjD = models.FloatField(default=0.0)
     adjT = models.FloatField(default=0.0)
 
+class Conference(models.Model):
+    _id = models.ObjectIdField()
+    name = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100)
+    
 class SchoolForm(forms.ModelForm):
     class Meta:
         model = School

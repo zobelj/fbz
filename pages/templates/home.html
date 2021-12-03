@@ -1,11 +1,184 @@
 {% extends "base.html" %}
     
     {% block content %}
+        <!-- get the CSRF token to access APIs securely -->
+        <script>
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+        </script>
+
+        <!-- reset the select menus for team calculation -->
+        <script>
+            // function to reset team1 and team2 select boxes
+            function resetSelectBoxes() {
+                $('#team1').val('default');
+                $("#team1").selectpicker("refresh");
+                $('#team2').val('default');
+                $("#team2").selectpicker("refresh");
+                // clear values in the table rows
+                var output_table = document.getElementById("output_table");
+                for (let i = 0; i < 3; i++) {
+                    output_table.rows[1].cells[i].innerHTML = "";
+                    output_table.rows[2].cells[i].innerHTML = "";
+                }                
+            
+            }
+        </script>
+
+        <!-- calculate matchup -->
+        <script>
+            // function to calculate the score and win probabilities of a matchup
+            function calculate() {
+                // get the names of the two teams selected and neutral_site
+                var team1 = $('#team1').val();
+                var team2 = $('#team2').val();
+                var neutral_site = $('#neutral_site').is(':checked');
+                
+                // use fetch to get the data from the api with POST
+                fetch('/calculate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        'team1': team1,
+                        'team2': team2,
+                        'neutral_site': neutral_site
+                    })
+                })
+                // then get the data from the response
+                .then(response => response.json())
+                .then(data => {
+                    // if the data is not null, then update the page with the data
+                    if (data != null) {
+                        // update the page with the data
+                        $('#team1_name').text(team1);
+                        $('#team2_name').text(team2);
+                        $('#team1_score').text(data.team1_score);
+                        $('#team2_score').text(data.team2_score);
+                        $('#team1_prob').text((data.team1_prob * 100).toFixed(2) + "%");
+                        $('#team2_prob').text((data.team2_prob * 100).toFixed(2) + "%");
+                    }
+                    // if the data is null, then reset the select boxes
+                    else {
+                        resetSelectBoxes();
+                    }
+                })
+            }
+        </script>
+
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Homepage</h1>
-                    <p1>This page is a work in progress.</p1>
+            <div class="row text-center justify-content-center">
+                <div class="col-md-6">
+                    <br>
+                    <h2>Calculate Matchup</h2>
+                    <br>
+                    <!-- Calculate predicted score, win probability given two teams -->
+                    <!-- two input boxes for team names -->
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <!-- dropdown search for team 1 -->
+                            <div class="form-group">
+                                <label for="team1">Away</label>
+                                <div>
+                                    <select class="selectpicker" data-live-search="true" id="team1">
+                                        <option style="display:none"></option>
+                                        {% for school in schools %}
+                                        <option value="{{ school.name }}">{{ school.name }}</option>
+                                        {% endfor %}
+                                    </select> 
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-2">
+                            <!-- checkbox for neutral site -->
+                            
+                                <label class="form-check-label" for="neutral_site">
+                                    Neutral Site
+                                </label>
+                                
+                                <div><input class="form-check-input" type="checkbox" id="neutral_site"></div>
+
+                        </div>
+                        <div class="col-lg-5">
+                            <!-- dropdown search for team 2 -->
+                            <div class="form-group">
+                                <label for="team2">Home</label>
+                                <div>
+                                    <select class="selectpicker" data-live-search="true" id="team2">
+                                        <option style="display:none"></option>
+                                        {% for school in schools %}
+                                        <option value="{{ school.name }}">{{ school.name }}</option>
+                                        {% endfor %}
+                                    </select> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-sm-12">
+                            <!-- output table for calculation results -->
+                            <br>
+                            <table class="table table-bordered table-striped" id="output_table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Team</th>
+                                        <th scope="col">Score</th>
+                                        <th scope="col">Win Probability</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="team1_row">
+                                        <td id="team1_name"></td>
+                                        <td id="team1_score"></td>
+                                        <td id="team1_prob"></td>
+                                    </tr>
+                                    <tr id="team2_row">
+                                        <td id="team2_name"></td>
+                                        <td id="team2_score"></td>
+                                        <td id="team2_prob"></td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-12">
+                            <br>
+                            <button type="button" class="btn btn-primary" onclick="calculate()" id="calculate">Calculate</button>
+                            <button type="button" class="btn btn-primary" onclick="resetSelectBoxes()" id="reset">Clear</button>
+                        </div>
+                    </div>
+                </div>
+                    
+                <br>
+                <div class="row text-center justify-content-center">
+                    <div class="col-md-6">
+                        {% if request.user.is_staff %}
+                        <hr class="mt-5">
+                        <p>You are a staff member! This button updates the database.</p>
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary" onclick="window.location.href='/update_database'">Update Database</button>
+                        </div>
+                        {% endif %}
+                        <hr class="mt-5">
+                    </div>
                 </div>
             </div>
         </div>

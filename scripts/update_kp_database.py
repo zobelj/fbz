@@ -1,9 +1,10 @@
 import pymongo
 
-client = pymongo.MongoClient("mongodb+srv://joe:boilerup@cluster0.si4pj.mongodb.net/database?retryWrites=true&w=majority")
-db = client["database"]
-collection = db["bracket_school"]
-
+def connect_to_mongo():
+    client = pymongo.MongoClient("mongodb+srv://joe:boilerup@cluster0.si4pj.mongodb.net/database?retryWrites=true&w=majority")
+    db = client["database"]
+    collection = db["bracket_school"]
+    return collection
 
 import requests
 import pandas as pd
@@ -30,7 +31,14 @@ def get_kp():
     return df
 
 def format_team(row):
-    return {'name': row['Team'], 'rank': int(row['Rk']), 'conference': row['Conf'], 'wins': int(row['W-L'].split('-')[0]), 'losses': int(row['W-L'].split('-')[1]), 'adjO': float(row['AdjO']), 'adjD': float(row['AdjD']), 'adjT': float(row['AdjT'])}
+    return {'name': row['Team'], 'rank': int(row['Rk']), 'conference': row['Conf'], 'wins': int(row['W-L'].split('-')[0]), 'losses': int(row['W-L'].split('-')[1]), 'adjEM': float(row['AdjEM']), 'adjO': float(row['AdjO']), 'adjD': float(row['AdjD']), 'adjT': float(row['AdjT'])}
 
-for row in get_kp().iterrows():
-    collection.insert_one(format_team(row[1]))
+def update():
+    collection = connect_to_mongo()
+    mongo_db = []
+    for row in get_kp().iterrows():
+        mongo_db.append(format_team(row[1]))    
+
+    # replace existing data with mongo_db
+    collection.drop()
+    collection.insert_many(mongo_db)
