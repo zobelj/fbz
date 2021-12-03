@@ -170,14 +170,13 @@
                 <br>
                 <div class="row text-center justify-content-center">
                     <div class="col-md-6">
-                        {% if request.user.is_staff %}
                         <hr class="mt-5">
+                        {% if request.user.is_staff %}
                         <p>You are a staff member! This button updates the database.</p>
                         <div class="col-sm-12">
                             <button type="button" class="btn btn-primary" onclick="window.location.href='/update_database'">Update Database</button>
                         </div>
                         {% endif %}
-                        <hr class="mt-5">
                     </div>
                 </div>
             </div>
