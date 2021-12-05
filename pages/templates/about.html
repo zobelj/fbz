@@ -1,17 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<!-- about page -->
+<script>
+    function setActiveNav() {
+        document.getElementById("about-nav-link").classList.add("active");
+    }
+</script>
 <div class="container">
     <div class="row text-center justify-content-center">
-        <div class="col-md-6">
-            <br>
-            <h1>About</h1>
-            <p>
-                Created by Joe Zobel and Jeremy Frank. This webapp will soon allow you to create
-                 a March Madness bracket, host an auction, and host a traditional snake draft.
-            </p>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h1>About</h1>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Created by Joe Zobel and Jeremy Frank. This webapp will soon allow you to create
+                        a March Madness bracket, host an auction, and host a traditional snake draft.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

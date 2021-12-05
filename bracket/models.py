@@ -1,5 +1,7 @@
 from djongo import models
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 REGIONS = (
     ('East', 'East'),
@@ -66,4 +68,10 @@ class Bracket(models.Model):
         model_container=School,
         model_form_class=SchoolForm,
     )
-    
+
+class RegistrationForm(UserCreationForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']

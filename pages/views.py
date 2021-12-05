@@ -1,9 +1,11 @@
 from django.shortcuts import render, HttpResponseRedirect
+from django.contrib.auth import logout, authenticate, login
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from bracket.models import School, Conference
 from scripts.calculate import calculate
+from bracket.models import RegistrationForm
 
 # Create your views here.
 def home_view(request):
@@ -25,7 +27,7 @@ def conference_view(request, conference_name):
     # get the full_name of the conference
     conf_name = Conference.objects.filter(name=conference_name).get().full_name
 
-    return render(request, 'schools.html', {'schools': conf_schools, 'conferences': Conference.objects.all(), 'database_title': conf_name})
+    return render(request, 'conference.html', {'schools': conf_schools, 'conferences': Conference.objects.all(), 'database_title': conf_name})
 
 @api_view(['GET', 'POST'])
 def calculate_view(request):
@@ -38,7 +40,7 @@ def calculate_view(request):
 
         # calculate the winner
         away_score, home_score, away_prob, home_prob, total_points, home_spread = calculate(away, home, neutral_site)
-        print(home_spread)
+        
         res = {
             'away_score': away_score,
             'home_score': home_score,
@@ -59,3 +61,23 @@ def update_database(request):
         print("Updating database...")
         update()
         return HttpResponseRedirect('/')
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/')
+
+def register_view(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            new_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+            login(request, new_user)
+            return HttpResponseRedirect('/')
+
+    else:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        form = RegistrationForm()
+
+    return render(request, 'registration/register.html', {'form': form})

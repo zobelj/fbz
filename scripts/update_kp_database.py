@@ -48,9 +48,6 @@ def update():
     avg_adjT = df['AdjT'].mean()
     avg_adjO = df['AdjO'].mean()
 
-    print(avg_adjT)
-    print(avg_adjO)
-
     # get the first entry in the settings collection
     settings_collection.find_one_and_update({}, {'$set': {'avg_adjT': avg_adjT, 'avg_adjO': avg_adjO}})
 

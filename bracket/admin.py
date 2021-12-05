@@ -18,4 +18,3 @@ admin.site.register(Bracket, BracketAdmin)
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Conference, ConferenceAdmin)
 admin.site.register(Calculate_Setting, Calculate_SettingAdmin)
-

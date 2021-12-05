@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="card card-block d-flex">
+                <div class="card-body align-items-center text-center">
+
+                    <form role="form" class="form-horizontal" method="post">{% csrf_token %}
+                        {% csrf_token %}
+                        <h1 class="h3 mb-3 font-weight-normal">Create an account</h1>
+                        
+                        {% for field in form %}
+                        
+                        <div class="input-group" style="padding: 5px">
+                            <span class="input-group-addon" style="background-color:#b77b48; color:white"><span class="glyphicon glyphicon-user"></span></span>
+                            <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" placeholder="{{ field.html_name }}" type="{{ field.html_name }}" /> 
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                <div class="row">
+                                    <span class="help-block">{{ error }}</span>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        
+                        <br>
+                        <button class="btn btn-dark btn-block" type="submit" value="login">Create account</button>
+                        <p class="small fw-bold mt-2 pt-1 mb-0">Already have an account? <a href="/login"
+                            class="link-danger">Login</a></p>
+                        <p class="mt-5 mb-3 text-muted">© 2021-2022</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function changePasswordClass() {
+        document.getElementById("id_password1").type = "password";
+        document.getElementById("id_password2").type = "password";
+    }
+</script>      
+{% endblock %}

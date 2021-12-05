@@ -3,6 +3,11 @@
     {% block content %}
         <!-- get the CSRF token to access APIs securely -->
         <script>
+            function setActiveNav() {
+                document.getElementById("home-nav-link").classList.add("active");
+            }
+        </script>
+        <script>
             function getCookie(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
@@ -55,7 +60,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
+                        'X-CSRFToken': csrftoken 
                     },
                     body: JSON.stringify({
                         'away': away,
@@ -95,56 +100,63 @@
 
         <div class="container">
             <div class="row text-center justify-content-center">
-                <div class="col-sm-9">
-                    <br>
-                    <h2>Calculate Matchup</h2>
-                    <br>
+                <div class="card col-lg-9">
+                    <div class="card-header">
+                        <br>
+                        <h2>Calculate Matchup</h2>
+                    </div>
+                    <div class="card-body">
                     <!-- Calculate predicted score, win probability given two teams -->
                     <!-- two input boxes for team names -->
-                    <div class="row justify-content-center">
-                        <div class="col-md-5">
-                            <!-- dropdown search for team 1 -->
-                            <div class="form-group">
-                                <label for="away">Away</label>
-                                <div>
-                                    <select class="selectpicker" data-live-search="true" id="away">
-                                        <option style="display:none"></option>
-                                        {% for school in schools %}
-                                        <option value="{{ school.name }}">{{ school.name }}</option>
-                                        {% endfor %}
-                                    </select> 
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-2">
-                            <!-- checkbox for neutral site -->
-                            
-                                <label class="form-check-label" for="neutral_site">
-                                    Neutral Site
-                                </label>
-                                
-                                <div><input class="form-check-input" type="checkbox" id="neutral_site"></div>
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <div class="row justify-content-center">
+                                    <div class="col-auto order-md-1">
+                                        <!-- dropdown search for team 1 -->
+                                        <div class="form-group">
+                                            <label for="away">Away</label>
+                                            <div>
+                                                <select class="selectpicker" data-live-search="true" id="away">
+                                                    <option style="display:none"></option>
+                                                    {% for school in schools %}
+                                                    <option value="{{ school.name }}">{{ school.name }}</option>
+                                                    {% endfor %}
+                                                </select> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-auto order-md-3">
+                                        <!-- dropdown search for team 2 -->
+                                        <div class="form-group">
+                                            <label for="home">Home</label>
+                                            <div>
+                                                <select class="selectpicker" data-live-search="true" id="home">
+                                                    <option style="display:none"></option>
+                                                    {% for school in schools %}
+                                                    <option value="{{ school.name }}">{{ school.name }}</option>
+                                                    {% endfor %}
+                                                </select> 
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        </div>
-                        <div class="col-md-5">
-                            <!-- dropdown search for team 2 -->
-                            <div class="form-group">
-                                <label for="home">Home</label>
-                                <div>
-                                    <select class="selectpicker" data-live-search="true" id="home">
-                                        <option style="display:none"></option>
-                                        {% for school in schools %}
-                                        <option value="{{ school.name }}">{{ school.name }}</option>
-                                        {% endfor %}
-                                    </select> 
+                                    <div class="col-auto order-md-2">
+                                        <!-- checkbox for neutral site -->
+                                        
+                                            <label class="form-check-label" for="neutral_site">
+                                                Neutral Site
+                                            </label>
+                                            
+                                            <div><input class="form-check-input" type="checkbox" id="neutral_site"></div>
+                                    </div>
+
                                 </div>
-                            </div>
                         </div>
-                    </div>
+                        </div>
                     
-                    <div class="row text-center">
-                        <div class="col-sm-12">
+                    <div class="row text-center justify-content-center">
+                        <div class="col-md-8">
                             <!-- output table for calculation results -->
                             <br>
                             <table class="table table-bordered table-striped" id="output_table">
@@ -170,7 +182,7 @@
                         </div>
                     </div>
                     <div class="row text-center justify-content-center">
-                        <div class="col-sm-6">
+                        <div class="col-md-8">
                             <table class="table table-bordered table-striped" id="spread_table">
                                 <tr>
                                     <td id="total_points"></th>
@@ -179,25 +191,27 @@
                             </table>
                         </div>
                         </div>
-                    </div>
+
                     <div class="row justify-content-center">
                         <div class="col-sm-12">
-                            <br>
+                            
                             <button type="button" class="btn btn-primary" onclick="calculate()" id="calculate">Calculate</button>
-                            <button type="button" class="btn btn-primary" onclick="resetSelectBoxes()" id="reset">Clear</button>
+                            <button type="button" tabindex="5" class="btn btn-primary" onclick="resetSelectBoxes()" id="reset">Clear</button>
                         </div>
                     </div>
+                    
                 </div>
                     
-                <br>
                 <div class="row text-center justify-content-center">
                     <div class="col-md-6">
-                        <hr class="mt-5">
+                        
                         {% if request.user.is_staff %}
+                        <hr class="mb-4">
                         <p>You are a staff member! This button updates the database.</p>
                         <div class="col-sm-12">
                             <button type="button" class="btn btn-primary" onclick="window.location.href='/update_database'">Update Database</button>
                         </div>
+                        <br>
                         {% endif %}
                     </div>
                 </div>
