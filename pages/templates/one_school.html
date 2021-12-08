@@ -1,25 +1,63 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12">
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+</script>
+<script>
+    $(document).ready(function() {
+        $('#playerTable').DataTable({
+            'order': [[ 3, 'desc' ]],
+            'paging': false,
+            'searching': false,
+            'bInfo': false,
+            /*
+            'columnDefs': [
+                {
+                    'targets': [2,7,8,9,10,11,13,14,16,17,21,22,23],
+                    'visible': false,
+                }
+            ]
+            */
+        }
+        );
+    });
+</script>
+<div class="card container">
+    <div class="row justify-content-center text-center">
+        <div class="col-lg-12" style="overflow-x: auto;">
             <br>
-            <h2>{{ database_title }}</h2>
-            <div style="overflow-y: auto; max-height: 550px">
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <th style="width: 8;text-align: center">Rank</th>
-                        <th style="width: 13; text-align: center">School</th>
-                        <th style="width: 13; text-align: center">Conference</th>
-                        <th style="width: 8; text-align: center">Wins</th>
-                        <th style="width: 8; text-align: center">Losses</th>
-                        <th style="width: 12; text-align: center">AdjEM</th>
-                        <th style="width: 12; text-align: center">AdjO</th>
-                        <th style="width: 12; text-align: center">AdjD</th>
-                        <th style="width: 12; text-align: center">AdjT</th>
-                    </tr>
-                    {% for school in schools %}
+            <h4>{{ database_title }}</h4>
+            <div>
+                <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th style="width: 8;text-align: center">Rank</th>
+                            <th style="width: 13; text-align: center">School</th>
+                            <th style="width: 13; text-align: center">Conference</th>
+                            <th style="width: 8; text-align: center">Wins</th>
+                            <th style="width: 8; text-align: center">Losses</th>
+                            <th style="width: 12; text-align: center">AdjEM</th>
+                            <th style="width: 12; text-align: center">AdjO</th>
+                            <th style="width: 12; text-align: center">AdjD</th>
+                            <th style="width: 12; text-align: center">AdjT</th>
+                        </tr>
+                    </thead>
                     <tr>
                         <td style="text-align: center">{{ school.rank }}</td>
                         <td style="text-align: center">{{ school.name }}</td>
@@ -31,8 +69,69 @@
                         <td style="text-align: center">{{ school.adjD }}</td>
                         <td style="text-align: center">{{ school.adjT }}</td>
                     </tr>
+                </table>
+
+                <table id="playerTable" class="display">
+                    <thead>
+                        <tr>
+                            <th style="width: 8;text-align: center">Player</th>
+                            <th style="width: 13; text-align: center">G</th>
+                            <th style="width: 13; text-align: center">GS</th>
+                            <th style="width: 8; text-align: center">MP</th>
+                            <th style="width: 12; text-align: center">PTS</th>
+                            <th style="width: 8; text-align: center">FG</th>
+                            <th style="width: 12; text-align: center">FGA</th>
+                            <th style="width: 12; text-align: center">FG%</th>
+                            <th style="width: 12; text-align: center">2P</th>
+                            <th style="width: 12; text-align: center">2PA</th>
+                            <th style="width: 12; text-align: center">2P%</th>
+                            <th style="width: 12; text-align: center">3P</th>
+                            <th style="width: 12; text-align: center">3PA</th>
+                            <th style="width: 12; text-align: center">3P%</th>
+                            <th style="width: 12; text-align: center">FT</th>
+                            <th style="width: 12; text-align: center">FTA</th>
+                            <th style="width: 12; text-align: center">FT%</th>
+                            <th style="width: 12; text-align: center">ORB</th>
+                            <th style="width: 12; text-align: center">DRB</th>
+                            <th style="width: 12; text-align: center">TRB</th>
+                            <th style="width: 12; text-align: center">AST</th>
+                            <th style="width: 12; text-align: center">STL</th>
+                            <th style="width: 12; text-align: center">BLK</th>
+                            <th style="width: 12; text-align: center">TOV</th>
+                            <th style="width: 12; text-align: center">PF</th>
+                        </tr>
+                    </thead>
+                    {% for player in players %}
+                        <tr>
+                            <td style="text-align: center">{{ player.name }}</td>
+                            <td style="text-align: center">{{ player.g }}</td>
+                            <td style="text-align: center">{{ player.gs }}</td>
+                            <td style="text-align: center">{{ player.mp }}</td>
+                            <td style="text-align: center">{{ player.pts }}</td>
+                            <td style="text-align: center">{{ player.fg }}</td>
+                            <td style="text-align: center">{{ player.fga }}</td>
+                            <td style="text-align: center">{{ player.fg_pct }}</td>
+                            <td style="text-align: center">{{ player.fg2 }}</td>
+                            <td style="text-align: center">{{ player.fg2a }}</td>
+                            <td style="text-align: center">{{ player.fg2_pct }}</td>
+                            <td style="text-align: center">{{ player.fg3 }}</td>
+                            <td style="text-align: center">{{ player.fg3a }}</td>
+                            <td style="text-align: center">{{ player.fg3_pct }}</td>
+                            <td style="text-align: center">{{ player.ft }}</td>
+                            <td style="text-align: center">{{ player.fta }}</td>
+                            <td style="text-align: center">{{ player.ft_pct }}</td>
+                            <td style="text-align: center">{{ player.orb }}</td>
+                            <td style="text-align: center">{{ player.drb }}</td>
+                            <td style="text-align: center">{{ player.trb }}</td>
+                            <td style="text-align: center">{{ player.ast }}</td>
+                            <td style="text-align: center">{{ player.stl }}</td>
+                            <td style="text-align: center">{{ player.blk }}</td>
+                            <td style="text-align: center">{{ player.tov }}</td>
+                            <td style="text-align: center">{{ player.pf }}</td>
+                        </tr>
                     {% endfor %}
                 </table>
+                <br>
             </div>
         </div>
     </div>

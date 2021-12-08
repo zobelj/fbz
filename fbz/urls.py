@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from pages.views import home_view, about_view, school_view, schools_view, conference_view, update_database, calculate_view, logout_view, register_view
+from pages.views import home_view, about_view, school_view, school_view_update, schools_view, conference_view, update_database, calculate_view, logout_view, register_view
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('about/', about_view, name='about'),
     path('schools/', schools_view, name='schools'),
     path('schools/<str:school_name>/', school_view, name='school'),
+    path('schools/<str:school_name>/true', school_view_update, name='school_update'),
     path('conference/<str:conference_name>/', conference_view, name='conference'),
     path('update_database/', update_database, name='update_database'),
     path('calculate/', calculate_view, name='calculate'),

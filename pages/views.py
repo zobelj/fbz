@@ -4,12 +4,13 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from bracket.models import School, Conference
-from scripts.calculate import calculate
+from scripts.calculate import calculate, get_reference_stats, update_reference_stats
 from bracket.models import RegistrationForm
+import json
 
 # Create your views here.
 def home_view(request):
-    return render(request, 'home.html', {'conferences': Conference.objects.all(), 'schools': School.objects.all()})
+        return render(request, 'home.html', {'conferences': Conference.objects.all(), 'schools': School.objects.all()})
 
 def about_view(request):
     return render(request, 'about.html', {'conferences': Conference.objects.all()})
@@ -19,14 +20,20 @@ def schools_view(request):
 
 def school_view(request, school_name):
     school_name = school_name.replace('-', ' ')
-    this_school = School.objects.filter(name=school_name)
-    return render(request, 'one_school.html', {'schools': this_school, 'conferences': Conference.objects.all(), 'database_title': school_name})
+    this_school = School.objects.filter(name=school_name)[0]
+    players = get_reference_stats(school_name)
+    
+    return render(request, 'one_school.html', {'players': players, 'school': this_school, 'conferences': Conference.objects.all(), 'database_title': school_name})
+
+def school_view_update(request, school_name):
+    update_reference_stats(school_name)
+
+    return HttpResponseRedirect('/schools/' + school_name.replace(' ', '-'))
 
 def conference_view(request, conference_name):
     conf_schools = School.objects.filter(conference=conference_name)
     # get the full_name of the conference
     conf_name = Conference.objects.filter(name=conference_name).get().full_name
-
     return render(request, 'conference.html', {'schools': conf_schools, 'conferences': Conference.objects.all(), 'database_title': conf_name})
 
 @api_view(['GET', 'POST'])

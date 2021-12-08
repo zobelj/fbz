@@ -9,11 +9,11 @@
                 <div class="card-body align-items-center justify-content-center text-center">
                     <form role="form" class="form-horizontal" method="post">{% csrf_token %}
                         {% csrf_token %}
-                        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Log in</h1>
 
                         {% if form.errors %}
                             <div class="alert alert-danger">
-                                Incorrect username or password.
+                                Invalid username or password.
                             </div>
                         {% endif %}
                         {% for field in form %}
