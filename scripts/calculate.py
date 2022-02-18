@@ -69,7 +69,7 @@ def update_reference_stats(school_name):
 
     url = f"https://www.sports-reference.com/cbb/schools/{ref_name}/2022.html"
 
-    df = pd.read_html(url)[-1]
+    df = pd.read_html(url)[5]
     # read each name and check if it is in the database
     # if it is, update the player
     # if it is not, create a new player
