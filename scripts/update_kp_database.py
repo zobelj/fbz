@@ -33,7 +33,7 @@ def get_kp():
     return df
 
 def format_team(row):
-    team = re.sub('[0-9]', '', row['Team'])
+    team = re.sub('[0-9]', '', row['Team']).rstrip()
     return {'name': team, 'rank': int(row['Rk']), 'conference': row['Conf'], 'wins': int(row['W-L'].split('-')[0]), 'losses': int(row['W-L'].split('-')[1]), 'adjEM': float(row['AdjEM']), 'adjO': float(row['AdjO']), 'adjD': float(row['AdjD']), 'adjT': float(row['AdjT'])}
 
 def update():

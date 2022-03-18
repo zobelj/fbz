@@ -61,7 +61,7 @@ def calculate(away_name, home_name, neutral_site):
 
 def update_reference_stats(school_name):
     print("Updating reference stats for " + school_name)
-    school_name = re.sub(r'[0-9]', '', school_name)
+    school_name = re.sub(r'[0-9]', '', school_name).rstrip()
 
     # format the school name
     ref_name = school_name.lower().replace(" ", "-").replace("'", "")
