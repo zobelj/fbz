@@ -1,4 +1,5 @@
 import pymongo
+import re
 
 def connect_to_mongo():
     client = pymongo.MongoClient("mongodb+srv://joe:boilerup@cluster0.si4pj.mongodb.net/database?retryWrites=true&w=majority")
@@ -32,7 +33,8 @@ def get_kp():
     return df
 
 def format_team(row):
-    return {'name': row['Team'], 'rank': int(row['Rk']), 'conference': row['Conf'], 'wins': int(row['W-L'].split('-')[0]), 'losses': int(row['W-L'].split('-')[1]), 'adjEM': float(row['AdjEM']), 'adjO': float(row['AdjO']), 'adjD': float(row['AdjD']), 'adjT': float(row['AdjT'])}
+    team = re.sub('[0-9]', '', row['Team'])
+    return {'name': team, 'rank': int(row['Rk']), 'conference': row['Conf'], 'wins': int(row['W-L'].split('-')[0]), 'losses': int(row['W-L'].split('-')[1]), 'adjEM': float(row['AdjEM']), 'adjO': float(row['AdjO']), 'adjD': float(row['AdjD']), 'adjT': float(row['AdjT'])}
 
 def update():
     collection, settings_collection = connect_to_mongo()
