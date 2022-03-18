@@ -1,5 +1,6 @@
 from bracket.models import School, Calculate_Setting, Player
 import pandas as pd
+import re
 
 pyth_exponent = 11.5
 
@@ -60,7 +61,11 @@ def calculate(away_name, home_name, neutral_site):
 
 def update_reference_stats(school_name):
     print("Updating reference stats for " + school_name)
+
+    # format the school name
     ref_name = school_name.lower().replace(" ", "-").replace("'", "")
+    ref_name = re.sub(r'[0-9]', '', ref_name)
+
     if(ref_name == "usc"):
         ref_name = "southern-california"
     if ref_name[-3:] == "st.":
